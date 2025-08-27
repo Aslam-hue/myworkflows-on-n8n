@@ -1,0 +1,412 @@
+{
+  "name": "My workflow 4",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.topic }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "You are ReactPostAgent, an expert content writer and React engineer.  \nYour job is to turn an input topic (headline + optional URL) into polished LinkedIn posts for React/Frontend developers and tech leaders.\n\n### Audience\n- Primary: React & frontend engineers (JavaScript/TypeScript), tech leads, startup devs.  \n- Secondary: product-minded engineers and dev managers.\n\n### Goals\n- Educate quickly, add actionable takeaways, and sound credible.  \n- Show React expertise (React 18+, Hooks, Suspense, Server Components, performance, accessibility).  \n- When useful, include a tiny JSX/TSX snippet (≤10 lines) that’s copy-pastable.\n\n### Tone & Style\n- Professional, concise, developer-friendly.  \n- Avoid hype and buzzwords; use plain language.  \n- 1 clear hook, 2–4 crisp insights, 1 call-to-action.  \n- Emojis: optional, max 2 per post.  \n- Hashtags: 3–5, relevant (e.g., #ReactJS #TypeScript #WebPerformance #Frontend).\n\n### Content Rules\n- Be accurate; if unsure, avoid claims.  \n- Prefer React best practices (Hooks over legacy classes, idiomatic patterns).  \n- Accessibility & performance tips are welcome (key props, memoization, lazy, Suspense).  \n- If code appears, wrap in ```tsx fences, ≤10 lines, no external deps unless standard (React, React DOM).  \n- No links unless a source_url is provided. If provided, reference it once at the end.  \n- Keep within LinkedIn-friendly length (~120–220 words per post).  \n- Indian audience friendly, but globally relevant. Avoid regional slang.\n\n### Output Format (JSON)\nReturn exactly one JSON object with this shape:\n{\n  \"topic\": \"<echo the given topic>\",\n  \"generated_at\": \"<YYYY-MM-DD>\",\n  \"posts\": [\n    {\n      \"hook\": \"<1–2 sentence scroll-stopper>\",\n      \"post_text\": \"<full LinkedIn caption with spacing and line breaks>\",\n      \"code_snippet\": \"```tsx\\n// optional, ≤10 lines\\n```\",\n      \"hashtags\": [\"#ReactJS\", \"#TypeScript\", \"#Frontend\"],\n      \"notes\": \"<1 sentence on why this matters>\"\n    },\n    { ... },\n    { ... }\n  ]\n}\nand send the datas to gmail"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        0
+      ],
+      "id": "b209aaa5-f903-4e71-b153-6545e3ed865e",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        272,
+        224
+      ],
+      "id": "de07dbd5-f9a8-41d1-8aaa-9756d0f97bbc",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "K1WrBj8aQB5TiaJz",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o",
+          "mode": "list",
+          "cachedResultName": "gpt-4o"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        400,
+        224
+      ],
+      "id": "027514aa-ffe9-4725-9c9f-63a8af7a97bb",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "WCkgachqrb2tTKEi",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7422afa1-bfcb-4873-94d5-8c0368cca4f7",
+              "leftValue": "={{ $json.index }}",
+              "rightValue": 5,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -192,
+        96
+      ],
+      "id": "7350dc22-ee17-4578-a775-9163c65b99f1",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        32,
+        192
+      ],
+      "id": "c2572aaf-5483-4da2-880b-e86e525b2447",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "15VbIEWgTeeygqpXne0R1gAvd_jtq9o82E8vxBY-V20M",
+          "mode": "list",
+          "cachedResultName": "my congen wf",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15VbIEWgTeeygqpXne0R1gAvd_jtq9o82E8vxBY-V20M/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/15VbIEWgTeeygqpXne0R1gAvd_jtq9o82E8vxBY-V20M/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "topic": "={{ $json.Topic }}",
+            "pub date": "={{ $json['Published Date'] }}",
+            "link": "={{ $json.Link }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "topic",
+              "displayName": "topic",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "pub date",
+              "displayName": "pub date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "link",
+              "displayName": "link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        32,
+        0
+      ],
+      "id": "ba4b41e1-5ad7-47f4-86fa-4d492dcd4663",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZ3HLLO7NnS2d2kT",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "23ec014@drngpit.ac.in",
+        "subject": "recent news",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        608,
+        0
+      ],
+      "id": "d3a3d9ac-eb4e-4218-9d1d-ec0870ecb40f",
+      "name": "Send a message",
+      "webhookId": "e366562f-3858-4b40-b320-8e86f89435f0",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "z9kXKTBvZdKGk8e5",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 9,
+              "triggerAtMinute": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1088,
+        96
+      ],
+      "id": "445a8f2f-df61-4f03-afb2-026c0885de8c",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://rss.app/feeds/WATx4oAbQr3rcb1S.xml",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -864,
+        96
+      ],
+      "id": "57aea143-a9eb-4ae6-972a-d4caf6fa8849",
+      "name": "RSS Feed"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b4a753d-2ba2-411a-9e07-02a2a28382a8",
+              "name": "Topic",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "95d98c6b-2a00-4275-b7a4-d063d6027b20",
+              "name": "Published Date",
+              "value": "={{ $json.pubDate }}",
+              "type": "string"
+            },
+            {
+              "id": "a33034d2-a28b-4799-8da5-db001f0cec21",
+              "name": "Link",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -640,
+        96
+      ],
+      "id": "9488bb10-12b8-44a0-8f8f-10f1b06c9584",
+      "name": "Topic separator"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nreturn $input.all().map((item, i) => {\n  item.json.index = i;\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -416,
+        96
+      ],
+      "id": "0685d8e3-ab66-4343-9023-4d98587122ed",
+      "name": "Index generator"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS Feed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Feed": {
+      "main": [
+        [
+          {
+            "node": "Topic separator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic separator": {
+      "main": [
+        [
+          {
+            "node": "Index generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Index generator": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4d77f8f4-0072-4ceb-a395-446068a5b68e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7656520118c30a411f6bed191d5404adb05fc24a400043e7e4f7eaf4094f9647"
+  },
+  "id": "L2OFNoGSEUAk1dlD",
+  "tags": []
+}
