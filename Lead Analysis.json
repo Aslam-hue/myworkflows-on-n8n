@@ -1,0 +1,474 @@
+{
+  "name": "Lead Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "LEAD SUBMISSION",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "placeholder": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Budget",
+              "placeholder": "budget",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Timeline",
+              "placeholder": "timeline",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "ProjectType",
+              "placeholder": "project ype",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Message",
+              "placeholder": "message",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -36
+      ],
+      "id": "b6045daa-9f5d-4c66-b9e9-4f763b9f3d65",
+      "name": "On form submission",
+      "webhookId": "77ee0d14-0ad5-4204-a7ea-1bc35a3be455"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        456,
+        64
+      ],
+      "id": "8714e376-ef1e-4222-8070-d23f482acb2c",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "WCkgachqrb2tTKEi",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        584,
+        64
+      ],
+      "id": "450eaeff-fc83-4600-88e9-7829d8599b09",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "WmvafdVO9nAsgr3r",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d446135f-4961-4d88-8368-3b55f2529c4d",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": 7,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1248,
+        -36
+      ],
+      "id": "ccde111d-1bed-4eab-aba9-f88a30445d25",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first().json;\n\n// Get the AI output text\nconst text = item.output || \"\";\n\n// Find \"Lead Score: <number>\"\nconst match = text.match(/Lead Score:\\s*(\\d+)/);\n\n// Return original fields + score + AI summary\nreturn [\n  {\n    json: {\n      Name: item.Name,\n      Email: item.Email,\n      Budget: item.Budget,\n      Timeline: item.Timeline,\n      ProjectType: item.ProjectType,\n      Message: item.Message,\n      output: item.output,   // keep AI output\n      score: match ? parseInt(match[1]) : 0, // default 0 if not found\n      fullText: text\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        -36
+      ],
+      "id": "dbb631b2-6d90-4237-8711-31b6bb4ef3ae",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "Your lead analysis",
+        "emailType": "text",
+        "message": "=Hi {{$json[\"Name\"]}},\n\nThanks for reaching out about your {{$json[\"ProjectType\"]}} project.\n\nWe’ve reviewed your request and it looks like a great fit! Our team will follow up with you shortly.\n\nBest regards,  \nAslam AI Agency\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1472,
+        -132
+      ],
+      "id": "fcb8997c-c968-4b19-9858-c37bb66f7b3b",
+      "name": "Send a message",
+      "webhookId": "c3860515-d653-4782-8b02-1915f57d8fea",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "z9kXKTBvZdKGk8e5",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1J3I9kbWeeTLd1usRIGPZqbCUBGo465V2ivogh9DcmGs",
+          "mode": "list",
+          "cachedResultName": "Lead Analysis Low Score",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3I9kbWeeTLd1usRIGPZqbCUBGo465V2ivogh9DcmGs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1J3I9kbWeeTLd1usRIGPZqbCUBGo465V2ivogh9DcmGs/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Score": "={{ $json.score }}",
+            "Reason": "={{ $json.output }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Score",
+              "displayName": "Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Reason",
+              "displayName": "Reason",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1472,
+        60
+      ],
+      "id": "fffef7de-8ed6-4475-ac42-58daa796ed77",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "cZ3HLLO7NnS2d2kT",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        800,
+        -36
+      ],
+      "id": "1ba4f4ab-8013-444b-ac4c-6bfd13346b68",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7785b214-dcb0-4300-88fb-6b2c6df2cd01",
+              "name": "Name",
+              "value": "={{ $json.Name }}",
+              "type": "string"
+            },
+            {
+              "id": "b49b8323-3e3f-40dd-bf42-e32cda8da1a1",
+              "name": "Email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "9bf51156-061b-4684-a8bd-145daea4fa56",
+              "name": "Budget",
+              "value": "={{ $json.Budget }}",
+              "type": "string"
+            },
+            {
+              "id": "f47f7242-b7eb-4f21-9122-cebef49254f3",
+              "name": "Timeline",
+              "value": "={{ $json.Timeline }}",
+              "type": "string"
+            },
+            {
+              "id": "a5e016e6-7764-4cf9-8b6b-5d3f137c8a3d",
+              "name": "ProjectType",
+              "value": "={{ $json.ProjectType }}",
+              "type": "string"
+            },
+            {
+              "id": "da6b0d95-250a-410d-aa9d-8382e0663d42",
+              "name": "Message",
+              "value": "={{ $json.Message }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        -36
+      ],
+      "id": "8c854fc8-a889-4929-b58a-f46d92d78cf6",
+      "name": "Field Extraction"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Here's your analysis",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=You are a lead scoring assistant for an AI agency. \nAnalyze the following lead details and return:\n- Lead Score (1–10) based on budget, urgency, and project relevance\n- Reasoning\n- Suggested Action (Follow-up immediately, Nurture later, Discard)\n\nLead Info:\nName: {{$json[\"Name\"]}}\nEmail: {{$json[\"Email\"]}}\nBudget: {{$json[\"Budget\"]}}\nTimeline: {{$json[\"Timeline\"]}}\nProject Type: {{$json[\"ProjectType\"]}}\nMessage: {{$json[\"Message\"]}}\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        -160
+      ],
+      "id": "4b3f34cc-cc27-4354-8f16-29a7fe00eebe",
+      "name": "Lead analyst"
+    },
+    {
+      "parameters": {
+        "content": "This Analyst Node will analyse the Budget , Timeline, Project type and writes if its possible in the time period and if its fits our policies and budget\n",
+        "height": 528
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        448,
+        -400
+      ],
+      "typeVersion": 1,
+      "id": "9f3b7ccc-8d34-4e18-a7eb-196da31a55a3",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "This Node Extracts the Name,Email,budget,Timeline,Project Type\n",
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        160,
+        -128
+      ],
+      "typeVersion": 1,
+      "id": "3bb7cfbf-6fc6-4e1d-9d56-65d886ab52cc",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "If the score is above 7 the conformation mail is sent.Else it is appended to the sheets for future considerations\n",
+        "height": 192,
+        "width": 304
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1136,
+        -112
+      ],
+      "typeVersion": 1,
+      "id": "dc5c6dbd-f947-4d06-abc0-4c01e733e035",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Field Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead analyst",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead analyst",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Field Extraction": {
+      "main": [
+        [
+          {
+            "node": "Lead analyst",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Lead analyst": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a2fa2aa6-39d1-4df5-a522-2f206e68cb93",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7656520118c30a411f6bed191d5404adb05fc24a400043e7e4f7eaf4094f9647"
+  },
+  "id": "dbRVbkb8mKrjikkm",
+  "tags": []
+}
